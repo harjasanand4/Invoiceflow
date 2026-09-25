@@ -1,0 +1,6 @@
+# Automatic HTTPS in front of the app. Replace the domain with yours
+# (a free subdomain from duckdns.org works). Caddy gets the certificate itself.
+invoiceflow.example.duckdns.org {
+    encode gzip
+    reverse_proxy api:8000
+}

@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+.env
+instance/
+inbox/
+data/synthetic/
+data/reviewed/
+evals/reports/*.json
+web/node_modules/
+web/dist/
+.DS_Store

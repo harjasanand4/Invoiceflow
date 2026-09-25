@@ -1,0 +1,19 @@
+# Production override: adds Caddy for HTTPS and stops exposing port 8000 directly.
+#   docker compose -f docker-compose.yml -f deploy/docker-compose.prod.yml up -d --build
+services:
+  api:
+    ports: !reset []
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  caddy_data:

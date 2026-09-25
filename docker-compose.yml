@@ -1,0 +1,53 @@
+# Full stack: Postgres + API/UI + background worker.
+#   docker compose up --build
+#   open http://localhost:8000
+# Drop PDFs into ./inbox and the worker picks them up.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: invoiceflow
+      POSTGRES_PASSWORD: invoiceflow
+      POSTGRES_DB: invoiceflow
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U invoiceflow"]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+  api:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://invoiceflow:invoiceflow@db:5432/invoiceflow
+      STORAGE_DIR: /app/instance/files
+      PROCESS_ON_UPLOAD: "false"   # the worker does the processing
+    ports:
+      - "8000:8000"
+    volumes:
+      - files:/app/instance/files
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  worker:
+    build: .
+    command: ["python", "-m", "app.worker", "--loop", "--interval", "5", "--watch-dir", "/app/inbox"]
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://invoiceflow:invoiceflow@db:5432/invoiceflow
+      STORAGE_DIR: /app/instance/files
+    volumes:
+      - files:/app/instance/files
+      - ./inbox:/app/inbox
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  files:

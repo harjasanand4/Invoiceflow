@@ -1,0 +1,47 @@
+# GitLab equivalent of .github/workflows/ci.yml (use whichever host you push to).
+stages: [test, eval, build]
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+backend-tests:
+  stage: test
+  image: python:3.11
+  services:
+    - name: postgres:16
+      alias: postgres
+  variables:
+    POSTGRES_USER: test
+    POSTGRES_PASSWORD: test
+    POSTGRES_DB: test
+  cache: { paths: [.cache/pip] }
+  script:
+    - pip install -r requirements-dev.txt
+    - ruff check .
+    - pytest
+    - TEST_DATABASE_URL=postgresql+psycopg://test:test@postgres:5432/test pytest
+
+eval-gate:
+  stage: eval
+  image: python:3.11
+  cache: { paths: [.cache/pip] }
+  script:
+    - pip install -r requirements-dev.txt
+    - python -m data.generate_invoices --count 80 --seed 42
+    - python -m evals.run_eval --extractor rules --min-field-accuracy 0.80 --min-error-recall 0.80 --min-auto-approved-precision 0.95
+  artifacts:
+    when: always
+    paths: [evals/reports/]
+
+frontend-build:
+  stage: test
+  image: node:22
+  script:
+    - cd web && npm ci && npm run build
+
+docker-build:
+  stage: build
+  image: docker:27
+  services: [docker:27-dind]
+  script:
+    - docker build -t invoiceflow .

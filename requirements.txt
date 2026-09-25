@@ -1,0 +1,13 @@
+# Runtime dependencies
+flask>=3.1,<4
+sqlalchemy>=2.0,<3
+pydantic>=2.7,<3
+python-dotenv>=1.0
+pdfplumber>=0.11
+gunicorn>=22
+psycopg[binary]>=3.2      # PostgreSQL driver (DATABASE_URL=postgresql+psycopg://...)
+anthropic>=0.40           # EXTRACTOR=llm|hybrid with LLM_PROVIDER=anthropic
+boto3>=1.34               # STORAGE_BACKEND=s3
+reportlab>=4.0            # synthetic demo invoices (data/generate_invoices.py)
+google-genai>=1.0         # LLM_PROVIDER=gemini (has a free tier)
+openai>=1.40              # LLM_PROVIDER=groq or openai_compatible (Groq has a free tier)

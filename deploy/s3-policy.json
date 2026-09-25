@@ -1,0 +1,18 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "InvoiceFlowDocuments",
+      "Effect": "Allow",
+      "Action": ["s3:PutObject", "s3:GetObject"],
+      "Resource": "arn:aws:s3:::YOUR-BUCKET-NAME/documents/*"
+    },
+    {
+      "Sid": "HeadChecks",
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket"],
+      "Resource": "arn:aws:s3:::YOUR-BUCKET-NAME",
+      "Condition": { "StringLike": { "s3:prefix": ["documents/*"] } }
+    }
+  ]
+}
