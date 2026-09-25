@@ -3,6 +3,7 @@
 Automated invoice processing: PDFs come in, fields get extracted (regex first, an LLM when needed), business rules catch bad invoices, and only the ones that need a person reach the review queue. Everything is measured by an evaluation harness that runs in CI.
 
 ![Review screen](docs/screenshots/review.png)
+![CI](https://github.com/harjasanand4/Invoiceflow/actions/workflows/ci.yml/badge.svg)
 
 ## What it does
 
@@ -21,7 +22,7 @@ On 80 generated invoices across 4 layouts, with 22 planted errors. One layout is
 | Extractor | Field accuracy | Held-out layout | Errors caught | Touchless | Auto-approved & correct | LLM calls / doc |
 |---|---|---|---|---|---|---|
 | Rules (regex) | 82.4% | 25.7% | 18/22 | 33.8% | 96.3% | 0 |
-| Hybrid (rules → Claude Haiku) | _run it_ | _run it_ | _run it_ | _run it_ | _run it_ | _run it_ |
+| Hybrid (rules → Groq gpt-oss-120b) | 98.8% | 94.7% | 22/22 | 71.2% | 100.0% | 0.525 |
 | LLM only (Claude Haiku) | _run it_ | _run it_ | _run it_ | _run it_ | _run it_ | 1.0 |
 
 Fill in the LLM rows by running `python -m evals.run_eval --extractor hybrid` (needs an API key). Full reports are written to `evals/reports/`.
