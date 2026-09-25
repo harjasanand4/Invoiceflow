@@ -13,3 +13,5 @@ evals/reports/*.json
 web/node_modules/
 web/dist/
 .DS_Store
+data/demo-upload/
+data/demo/
