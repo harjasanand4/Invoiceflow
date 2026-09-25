@@ -15,6 +15,8 @@ Automated invoice processing: PDFs come in, fields get extracted (regex first, a
 - **Is safe to run for real:** idempotent ingest (SHA-256), retries with a failure state, several workers in parallel without double-processing (Postgres `SKIP LOCKED`), money stored as integer cents.
 - **Measures itself.** The eval harness scores field accuracy, error detection and, most importantly, how often an auto-approved invoice was actually correct. CI fails if any of these drop.
 
+![Demo](docs/demo.gif)
+
 ## Results
 
 On 80 generated invoices across 4 layouts, with 22 planted errors. One layout is **held out**: the regex extractor was never written against it, so it measures how each approach handles a vendor it hasn't seen.
